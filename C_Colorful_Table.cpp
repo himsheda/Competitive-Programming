@@ -9,7 +9,6 @@ using namespace std;
 #define ppi pair<pii,int>
 #define ppp pair<p,p> 
 #define vpi vector<pii>
-#define vppi vector<ppi>
 #define vi vector<int>
 #define vvi vector<vi>
 #define vs vector<string>
@@ -47,36 +46,42 @@ const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1};
 void init_code(){
     ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
 }
-
 void solve(){
-    // Define the dimensions of the matrix
-    int n = 4;  // Number of rows
-    int m = 4;  // Number of columns
-
-    std::mt19937 gen(42);
-    std::uniform_real_distribution<double> distribution(0.0, 1.0);
-
-    // Create the matrix and fill it with random 0s and 1s
-    std::vector<std::vector<int>> matrix(n, std::vector<int>(m, 0));
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j) {
-            double rand_num = distribution(gen);
-            if (rand_num <= 0.5) {
-                matrix[i][j] = 0;
-            } else {
-                matrix[i][j] = 1;
-            }
-        }
+    int n,k;
+    cin>>n>>k;
+    vi a(n);
+    take(a);
+    vi leftmax(n),rightmax(n);
+    leftmax[0]=a[0];
+    ff(i,1,n){
+        leftmax[i]=max(leftmax[i-1],a[i]);
     }
-
-    show(matrix);
-
+    rightmax[n-1]=a[n-1];
+    fb(i,0,n-2){
+        rightmax[i]=max(rightmax[i+1],a[i]);
+    }
+    reverse(all(rightmax));
+    // show(leftmax);
+    // show(rightmax);
+    vi arr(k+1);
+    ff(i,0,n){
+        int l=lower_bound(all(leftmax),a[i])-leftmax.begin();
+        int r=lower_bound(all(rightmax),a[i])-rightmax.begin();
+        r=n-r;
+        // cout<<l<<" "<<r<<" "<<a[i]<<endl;
+        
+        arr[a[i]]=max(arr[a[i]],2*(r-l));
+    }
+    ff(i,1,k+1){
+        cout<<arr[i]<<" ";
+    }
+    cout<<endl;
 }
 int32_t main(){
     init_code();
     //cout << fixed << setprecision(1);
     int t=1;
-    // cin>>t;
+    cin>>t;
     while(t--){
        solve(); 
     }

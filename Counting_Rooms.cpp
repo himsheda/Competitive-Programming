@@ -9,7 +9,6 @@ using namespace std;
 #define ppi pair<pii,int>
 #define ppp pair<p,p> 
 #define vpi vector<pii>
-#define vppi vector<ppi>
 #define vi vector<int>
 #define vvi vector<vi>
 #define vs vector<string>
@@ -47,30 +46,33 @@ const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1};
 void init_code(){
     ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
 }
-
+void dfs(int i,int j,vs &arr,vvi &vis){
+    int n=sz(arr),m=sz(arr[0]);
+    vis[i][j]=1;
+    ff(k,0,4){
+        int x=i+dx[k];
+        int y=j+dy[k];
+        if(x>=0&&x<n&&j>=0&&j<m&&!vis[x][y] && arr[x][y]=='.'){
+            dfs(x,y,arr,vis);
+        }
+    }
+}
 void solve(){
-    // Define the dimensions of the matrix
-    int n = 4;  // Number of rows
-    int m = 4;  // Number of columns
-
-    std::mt19937 gen(42);
-    std::uniform_real_distribution<double> distribution(0.0, 1.0);
-
-    // Create the matrix and fill it with random 0s and 1s
-    std::vector<std::vector<int>> matrix(n, std::vector<int>(m, 0));
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j) {
-            double rand_num = distribution(gen);
-            if (rand_num <= 0.5) {
-                matrix[i][j] = 0;
-            } else {
-                matrix[i][j] = 1;
+    int n,m;
+    cin>>n>>m;
+    vs arr(n);
+    take(arr);
+    vvi vis(n,vi(m));
+    int count=0;
+    ff(i,0,n){
+        ff(j,0,m){
+            if(!vis[i][j] && arr[i][j]=='.'){
+                count++;
+                dfs(i,j,arr,vis);
             }
         }
     }
-
-    show(matrix);
-
+    cout<<count<<endl;
 }
 int32_t main(){
     init_code();

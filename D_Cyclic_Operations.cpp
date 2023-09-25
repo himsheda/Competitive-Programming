@@ -9,7 +9,6 @@ using namespace std;
 #define ppi pair<pii,int>
 #define ppp pair<p,p> 
 #define vpi vector<pii>
-#define vppi vector<ppi>
 #define vi vector<int>
 #define vvi vector<vi>
 #define vs vector<string>
@@ -47,36 +46,70 @@ const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1};
 void init_code(){
     ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
 }
-
 void solve(){
-    // Define the dimensions of the matrix
-    int n = 4;  // Number of rows
-    int m = 4;  // Number of columns
-
-    std::mt19937 gen(42);
-    std::uniform_real_distribution<double> distribution(0.0, 1.0);
-
-    // Create the matrix and fill it with random 0s and 1s
-    std::vector<std::vector<int>> matrix(n, std::vector<int>(m, 0));
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j) {
-            double rand_num = distribution(gen);
-            if (rand_num <= 0.5) {
-                matrix[i][j] = 0;
-            } else {
-                matrix[i][j] = 1;
+    int n,k;
+    cin>>n>>k;
+    vi arr(n);
+    take(arr);
+    
+    if(k==1){
+        ff(i,0,n){
+            if(arr[i]!=i+1){
+                cout<<"NO"<<endl;
+                return;
+            }
+        }
+        cout<<"YES"<<endl;
+        return;
+    }
+    vi vis(n+1,0);
+    int ind=0;
+    vvi adj(n+1);
+    vi indeg(n+1,0);
+    ff(i,0,n){
+        adj[i+1].pb(arr[i]);
+        indeg[arr[i]]++;
+    }
+    queue<int> q;
+    ff(i,1,n+1){
+        if(indeg[i]==0){
+            q.push(i);
+            vis[i]=1;
+        }
+    }
+    while(!q.empty()){
+        int u=q.front();
+        q.pop();
+        for(auto v: adj[u]){
+            indeg[v]--;
+            if(indeg[v]==0){
+                q.push(v);
+                vis[v]=1;
             }
         }
     }
-
-    show(matrix);
-
+    ff(i,1,n+1){
+        if(vis[i]==0){
+            int count=0;
+            int j=i;
+            while(vis[j]==0){
+                vis[j]=1;
+                j=arr[j-1];
+                count++;
+            }
+            if(count!=k){
+                cout<<"NO"<<endl;
+                return;
+            }
+        }
+    }
+    cout<<"YES"<<endl;
 }
 int32_t main(){
     init_code();
     //cout << fixed << setprecision(1);
     int t=1;
-    // cin>>t;
+    cin>>t;
     while(t--){
        solve(); 
     }

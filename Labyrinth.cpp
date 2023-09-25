@@ -9,7 +9,6 @@ using namespace std;
 #define ppi pair<pii,int>
 #define ppp pair<p,p> 
 #define vpi vector<pii>
-#define vppi vector<ppi>
 #define vi vector<int>
 #define vvi vector<vi>
 #define vs vector<string>
@@ -44,33 +43,64 @@ template<class T> void take(vector<T>&a) {trav(i,a) cin >> i;}
 const int INF = 9e18;
 const int mod = 7+1e9;
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1};
+const char ds[4]{'U','L','D','R'};
 void init_code(){
     ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
 }
-
 void solve(){
-    // Define the dimensions of the matrix
-    int n = 4;  // Number of rows
-    int m = 4;  // Number of columns
-
-    std::mt19937 gen(42);
-    std::uniform_real_distribution<double> distribution(0.0, 1.0);
-
-    // Create the matrix and fill it with random 0s and 1s
-    std::vector<std::vector<int>> matrix(n, std::vector<int>(m, 0));
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j) {
-            double rand_num = distribution(gen);
-            if (rand_num <= 0.5) {
-                matrix[i][j] = 0;
-            } else {
-                matrix[i][j] = 1;
+    int n,m;
+    cin>>n>>m;
+    vs arr(n);
+    take(arr);
+    queue<pair<int,pair<int,int> > > q;
+    vvi vis(n,vi(m,0));
+    ff(i,0,n){
+        ff(j,0,m){
+            if(arr[i][j]=='A'){
+                vis[i][j]=1;
+                q.push({i,{j,1}});
+                while(!q.empty()){
+                    int a=q.front().F;
+                    int b=q.front().S.F;
+                    int c=q.front().S.S;
+                    q.pop();
+                    ff(r,0,4){
+                        int x=a+dx[r];
+                        int y=b+dy[r];
+                        if(x>=0&&x<n&&y>=0&&y<m&&!vis[x][y]&&(arr[x][y]=='.'||arr[x][y]=='B')){
+                            if(arr[x][y]=='B'){
+                                vis[x][y]=c+1;
+                                cout<<"YES"<<endl;
+                                cout<<c<<endl;
+                                string ans="";
+                                int prev=c+1;
+                                while(vis[x][y]!=1){
+                                    ff(k,0,4){
+                                        int p=x+dx[k];
+                                        int q=y+dy[k];
+                                        if(p>=0&&p<n&&q>=0&&q<m&&vis[p][q]==vis[x][y]-1){
+                                            ans+=ds[k];
+                                            x=p;
+                                            y=q;
+                                            prev--;
+                                            break;
+                                        }
+                                    }
+                                }
+                                reverse(all(ans));
+                                cout<<ans<<endl;
+                                return;
+                            }
+                            vis[x][y]=c+1;
+                            q.push({x,{y,c+1}});
+                        }
+                    }
+                }
+                cout<<"NO"<<endl;
+                return;
             }
         }
     }
-
-    show(matrix);
-
 }
 int32_t main(){
     init_code();

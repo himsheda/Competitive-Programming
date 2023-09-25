@@ -9,7 +9,6 @@ using namespace std;
 #define ppi pair<pii,int>
 #define ppp pair<p,p> 
 #define vpi vector<pii>
-#define vppi vector<ppi>
 #define vi vector<int>
 #define vvi vector<vi>
 #define vs vector<string>
@@ -47,36 +46,50 @@ const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1};
 void init_code(){
     ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
 }
-
 void solve(){
-    // Define the dimensions of the matrix
-    int n = 4;  // Number of rows
-    int m = 4;  // Number of columns
-
-    std::mt19937 gen(42);
-    std::uniform_real_distribution<double> distribution(0.0, 1.0);
-
-    // Create the matrix and fill it with random 0s and 1s
-    std::vector<std::vector<int>> matrix(n, std::vector<int>(m, 0));
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j) {
-            double rand_num = distribution(gen);
-            if (rand_num <= 0.5) {
-                matrix[i][j] = 0;
-            } else {
-                matrix[i][j] = 1;
+    int n;
+    cin>>n; 
+    vi arr(n);
+    take(arr);
+    string s;
+    cin>>s;
+    int zero=0;
+    vi pref(n+1,0);
+    ff(i,0,n){
+        if(s[i]=='0'){
+            zero^=arr[i];
+        }
+        pref[i+1]=pref[i]^arr[i];
+    }
+    int q;
+    cin>>q;
+    while(q--){
+        int tp;
+        cin>>tp;
+        if(tp==2){
+            int g;
+            cin>>g;
+            if(g==0){
+                cout<<zero<<" ";
+            }
+            else{
+                cout<<(zero^pref[n])<<" ";
             }
         }
+        else{
+            int l,r;
+            cin>>l>>r;
+            zero^=pref[r]^pref[l-1];
+        }
     }
-
-    show(matrix);
+    cout<<endl;
 
 }
 int32_t main(){
     init_code();
     //cout << fixed << setprecision(1);
     int t=1;
-    // cin>>t;
+    cin>>t;
     while(t--){
        solve(); 
     }

@@ -41,35 +41,67 @@ template <class T> void show(pair<T, T>p) {cout << p.F << ' ' << p.S << endl;}
 void show(vector<string>&a) {trav(i,a) cout << i << endl;}
 template<class T> void take(vector<T>&a) {trav(i,a) cin >> i;}
 
-const int INF = 9e18;
+const int INF = 9e15;
 const int mod = 7+1e9;
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1};
 void init_code(){
     ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
 }
-
-void solve(){
-    // Define the dimensions of the matrix
-    int n = 4;  // Number of rows
-    int m = 4;  // Number of columns
-
-    std::mt19937 gen(42);
-    std::uniform_real_distribution<double> distribution(0.0, 1.0);
-
-    // Create the matrix and fill it with random 0s and 1s
-    std::vector<std::vector<int>> matrix(n, std::vector<int>(m, 0));
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j) {
-            double rand_num = distribution(gen);
-            if (rand_num <= 0.5) {
-                matrix[i][j] = 0;
-            } else {
-                matrix[i][j] = 1;
-            }
+void dfs(int i,vvi &adj,vi &vis){
+    vis[i]=1;
+    for(auto &a:adj[i]){
+        if(!vis[a]){
+            dfs(a,adj,vis);
         }
     }
-
-    show(matrix);
+}
+void solve(){
+    int n,m;
+    cin>>n>>m;
+    vector<pip> arr(m);
+    vvi adj(n+1);
+    ff(i,0,m){
+        cin>>arr[i].F>>arr[i].S.F>>arr[i].S.S;
+        adj[arr[i].F].pb(arr[i].S.F);
+    }
+    vi dis(n+1,0);
+    vi par(n+1);
+    ff(i,0,n-1){
+        for(auto &a:arr){
+            if(dis[a.S.F]>dis[a.F]+a.S.S){
+                dis[a.S.F]=dis[a.F]+a.S.S;
+                par[a.S.F]=a.F;
+            }
+        }
+        // show(dis);
+    }
+    for(auto &a:arr){
+        if(dis[a.S.F]>dis[a.F]+a.S.S){
+            par[a.S.F]=a.F;
+            int slow=par[a.S.F];
+            int fast=par[par[a.S.F]];
+            while(slow!=fast){
+                slow=par[slow];
+                fast=par[par[fast]];
+            }
+            vi ans;
+            ans.pb(slow);
+            fast=slow;
+            slow=par[slow];
+            
+            while(slow!=fast){
+                ans.pb(slow);
+                slow=par[slow];
+            }
+            ans.pb(slow);
+            cout<<"YES"<<endl;
+            reverse(all(ans));
+            show(ans);
+            return;
+        }
+    }
+    
+    cout<<"NO"<<endl;
 
 }
 int32_t main(){

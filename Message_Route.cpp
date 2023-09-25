@@ -9,7 +9,6 @@ using namespace std;
 #define ppi pair<pii,int>
 #define ppp pair<p,p> 
 #define vpi vector<pii>
-#define vppi vector<ppi>
 #define vi vector<int>
 #define vvi vector<vi>
 #define vs vector<string>
@@ -47,29 +46,48 @@ const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1};
 void init_code(){
     ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
 }
-
 void solve(){
-    // Define the dimensions of the matrix
-    int n = 4;  // Number of rows
-    int m = 4;  // Number of columns
-
-    std::mt19937 gen(42);
-    std::uniform_real_distribution<double> distribution(0.0, 1.0);
-
-    // Create the matrix and fill it with random 0s and 1s
-    std::vector<std::vector<int>> matrix(n, std::vector<int>(m, 0));
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j) {
-            double rand_num = distribution(gen);
-            if (rand_num <= 0.5) {
-                matrix[i][j] = 0;
-            } else {
-                matrix[i][j] = 1;
+    int n,m;
+    cin>>n>>m;
+    vvi adj(n+1);
+    ff(i,0,m){
+        int x,y;
+        cin>>x>>y;
+        adj[x].pb(y);
+        adj[y].pb(x);
+    }
+    queue<int> q;
+    vi par(n+1),vis(n+1);
+    ff(i,0,n){
+        par[i]=i;
+    }
+    q.push(1);
+    vis[1]=1;
+    while(!q.empty()){
+        int i=q.front();
+        q.pop();
+        for(auto &a:adj[i]){
+            if(!vis[a]){
+                q.push(a);
+                vis[a]=1;
+                par[a]=i;
             }
         }
     }
-
-    show(matrix);
+    if(!vis[n]){
+        cout<<"IMPOSSIBLE"<<endl;
+        return;
+    }
+    vi ans;
+    int a=n;
+    while(a!=par[a]){
+        ans.pb(a);
+        a=par[a];
+    }
+    ans.pb(1);
+    cout<<sz(ans)<<endl;
+    reverse(all(ans));
+    show(ans);
 
 }
 int32_t main(){

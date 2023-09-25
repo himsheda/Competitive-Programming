@@ -9,7 +9,6 @@ using namespace std;
 #define ppi pair<pii,int>
 #define ppp pair<p,p> 
 #define vpi vector<pii>
-#define vppi vector<ppi>
 #define vi vector<int>
 #define vvi vector<vi>
 #define vs vector<string>
@@ -47,36 +46,74 @@ const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1};
 void init_code(){
     ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
 }
-
 void solve(){
-    // Define the dimensions of the matrix
-    int n = 4;  // Number of rows
-    int m = 4;  // Number of columns
-
-    std::mt19937 gen(42);
-    std::uniform_real_distribution<double> distribution(0.0, 1.0);
-
-    // Create the matrix and fill it with random 0s and 1s
-    std::vector<std::vector<int>> matrix(n, std::vector<int>(m, 0));
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j) {
-            double rand_num = distribution(gen);
-            if (rand_num <= 0.5) {
-                matrix[i][j] = 0;
-            } else {
-                matrix[i][j] = 1;
+    int n;
+    cin>>n;
+    vi a(n);
+    take(a);
+    vi c(n);
+    take(c);
+    vector<vector<pii>> graph(n+1);
+    vi indeg(n+1,0);
+    ff(i,0,n){
+        graph[i+1].pb({2*c[i],a[i]});
+        indeg[a[i]]++;
+    }
+    vector<int> ans;
+    queue<int> q;
+    vi vis(n+1,0);
+    for(int i=1;i<=n;i++){
+        if(indeg[i]==0){
+            q.push(i);
+            ans.pb(i);
+            vis[i]=1;
+        }
+    }
+    
+    while(!q.empty()){
+        int u=q.front();
+        q.pop();
+        for(auto v:graph[u]){
+            indeg[v.S]--;
+            if(indeg[v.S]==0){
+                q.push(v.S);
+                ans.pb(v.S);
+                vis[v.S]=1;
             }
         }
     }
+    ff(i,1,n+1){
+        if(!vis[i]){
+            vi cycle;
+            int j=i;
+            while(!vis[j]){
+                cycle.pb(j);
+                vis[j]=1;
+                j=a[j-1];
+            }
+            int mn=INT_MAX;
+            int ind=-1;
+            ff(k,0,cycle.size()){
+                if(c[cycle[k]-1]<mn){
+                    mn=c[cycle[k]-1];
+                    ind=k;
+                }
+            }
+            ind++;
+            // cout<<ind+1<<endl;
+            ff(k,0,cycle.size()){
+                ans.pb(cycle[(ind+k)%cycle.size()]);
+            }
 
-    show(matrix);
-
+        }
+    }
+    show(ans);
 }
 int32_t main(){
     init_code();
     //cout << fixed << setprecision(1);
     int t=1;
-    // cin>>t;
+    cin>>t;
     while(t--){
        solve(); 
     }

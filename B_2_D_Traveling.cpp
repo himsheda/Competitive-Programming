@@ -9,7 +9,6 @@ using namespace std;
 #define ppi pair<pii,int>
 #define ppp pair<p,p> 
 #define vpi vector<pii>
-#define vppi vector<ppi>
 #define vi vector<int>
 #define vvi vector<vi>
 #define vs vector<string>
@@ -41,42 +40,47 @@ template <class T> void show(pair<T, T>p) {cout << p.F << ' ' << p.S << endl;}
 void show(vector<string>&a) {trav(i,a) cout << i << endl;}
 template<class T> void take(vector<T>&a) {trav(i,a) cin >> i;}
 
-const int INF = 9e18;
+const int INF = 9e12;
 const int mod = 7+1e9;
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1};
 void init_code(){
     ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
 }
-
+int dis(pii a,pii b){
+    return abs(a.F-b.F)+abs(a.S-b.S);
+}
 void solve(){
-    // Define the dimensions of the matrix
-    int n = 4;  // Number of rows
-    int m = 4;  // Number of columns
-
-    std::mt19937 gen(42);
-    std::uniform_real_distribution<double> distribution(0.0, 1.0);
-
-    // Create the matrix and fill it with random 0s and 1s
-    std::vector<std::vector<int>> matrix(n, std::vector<int>(m, 0));
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j) {
-            double rand_num = distribution(gen);
-            if (rand_num <= 0.5) {
-                matrix[i][j] = 0;
-            } else {
-                matrix[i][j] = 1;
-            }
-        }
+    int n,k,a,b;
+    cin>>n>>k>>a>>b;
+    a--;
+    b--;
+    
+    vpi arr(n);
+    ff(i,0,n){
+        cin>>arr[i].F;
+        cin>>arr[i].S;
     }
-
-    show(matrix);
+    if(a<k&&b<k){
+        // cout<<a<<" "<<b<<" "<<k<<endl;
+        cout<<0<<endl;
+        return;
+    }
+    int ans1=INF;
+    ff(i,0,k){
+        ans1=min(ans1,dis(arr[i],arr[a]));
+    }
+    int ans2=INF;
+    ff(i,0,k){
+        ans2=min(ans2,dis(arr[i],arr[b]));
+    }
+    cout<<min({ans1+ans2,dis(arr[a],arr[b])})<<endl;
 
 }
 int32_t main(){
     init_code();
     //cout << fixed << setprecision(1);
     int t=1;
-    // cin>>t;
+    cin>>t;
     while(t--){
        solve(); 
     }

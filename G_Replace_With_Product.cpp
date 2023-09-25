@@ -9,7 +9,6 @@ using namespace std;
 #define ppi pair<pii,int>
 #define ppp pair<p,p> 
 #define vpi vector<pii>
-#define vppi vector<ppi>
 #define vi vector<int>
 #define vvi vector<vi>
 #define vs vector<string>
@@ -47,36 +46,64 @@ const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1};
 void init_code(){
     ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
 }
-
 void solve(){
-    // Define the dimensions of the matrix
-    int n = 4;  // Number of rows
-    int m = 4;  // Number of columns
-
-    std::mt19937 gen(42);
-    std::uniform_real_distribution<double> distribution(0.0, 1.0);
-
-    // Create the matrix and fill it with random 0s and 1s
-    std::vector<std::vector<int>> matrix(n, std::vector<int>(m, 0));
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j) {
-            double rand_num = distribution(gen);
-            if (rand_num <= 0.5) {
-                matrix[i][j] = 0;
-            } else {
-                matrix[i][j] = 1;
+    int n;
+    cin>>n;
+    vi a(n);
+    take(a);
+    int prod=1;
+    int i=0;
+    while(i<n&&a[i]==1){
+        i++;
+    }
+    int left=i+1;
+    while(i<n&&prod*a[i]<=2*n){
+        prod*=a[i];
+        i++;
+    }
+    int j=n-1;
+    while(j>=0&&a[j]==1){
+        j--;
+    }
+    if(j==-1){
+        cout<<1<<" "<<1<<endl;
+        return;
+    }
+    int right=j+1;
+    if(i!=n){
+        cout<<left<<" "<<right<<endl;
+        return;
+    }
+    vi arr;
+    vi pref(n+1),prefprod(n+1,1);
+    ff(i,0,n){
+        pref[i+1]=pref[i]+a[i];
+        prefprod[i+1]=prefprod[i]*a[i];
+        if(a[i]>=2){
+            arr.pb(i+1);
+        }
+    }
+    
+    int ind1=0,ind2=0,mx=0;
+    ff(i,0,sz(arr)){
+        ff(j,i,sz(arr)){
+            int l=arr[i],r=arr[j];
+            int sum=pref[l-1]+pref[n]-pref[r]+prefprod[r]/prefprod[l-1];
+            // cout<<l<<" "<<r<<" "<<sum<<endl;
+            if(sum>mx){
+                mx=sum;
+                ind1=l;
+                ind2=r;
             }
         }
     }
-
-    show(matrix);
-
+    cout<<ind1<<" "<<ind2<<endl;
 }
 int32_t main(){
     init_code();
     //cout << fixed << setprecision(1);
     int t=1;
-    // cin>>t;
+    cin>>t;
     while(t--){
        solve(); 
     }

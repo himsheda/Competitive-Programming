@@ -47,29 +47,37 @@ const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1};
 void init_code(){
     ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
 }
-
-void solve(){
-    // Define the dimensions of the matrix
-    int n = 4;  // Number of rows
-    int m = 4;  // Number of columns
-
-    std::mt19937 gen(42);
-    std::uniform_real_distribution<double> distribution(0.0, 1.0);
-
-    // Create the matrix and fill it with random 0s and 1s
-    std::vector<std::vector<int>> matrix(n, std::vector<int>(m, 0));
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j) {
-            double rand_num = distribution(gen);
-            if (rand_num <= 0.5) {
-                matrix[i][j] = 0;
-            } else {
-                matrix[i][j] = 1;
-            }
+void dfs(vvi &adj,int u,int p,vi &weight,vi &arr,int &temp){
+    weight[u] = 1;
+    for(auto &v:adj[u]){
+        if(v!=p){
+            dfs(adj,v,u,weight,arr,temp);
+            weight[u] += weight[v];
         }
     }
+    temp = max(temp,weight[u]);
+}
+void solve(){
+    int n;
+    cin>>n;
+    vi a(n);
+    take(a);
+    vvi adj(n+1);
+    ff(i,0,n-1){
+        int u,v;
+        cin>>u>>v;
+        adj[u].pb(v);
+        adj[v].pb(u);
+    }
+    vi ans(n+1, 0);
+    int temp = 0;
+    vi weight(n+1, 0);
+    dfs(adj, 1, 0, weight, a, temp);
+    ans[1] = temp;
+    dfs2(adj, 1, 0, ans, weight, a, n);
+    for(int i=1;i<=n;i++) cout<<ans[i]<<" ";
+    cout<<endl;
 
-    show(matrix);
 
 }
 int32_t main(){

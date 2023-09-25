@@ -9,7 +9,6 @@ using namespace std;
 #define ppi pair<pii,int>
 #define ppp pair<p,p> 
 #define vpi vector<pii>
-#define vppi vector<ppi>
 #define vi vector<int>
 #define vvi vector<vi>
 #define vs vector<string>
@@ -42,35 +41,44 @@ void show(vector<string>&a) {trav(i,a) cout << i << endl;}
 template<class T> void take(vector<T>&a) {trav(i,a) cin >> i;}
 
 const int INF = 9e18;
-const int mod = 7+1e9;
+const int mod = 998244353;
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1};
 void init_code(){
     ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
 }
-
 void solve(){
-    // Define the dimensions of the matrix
-    int n = 4;  // Number of rows
-    int m = 4;  // Number of columns
-
-    std::mt19937 gen(42);
-    std::uniform_real_distribution<double> distribution(0.0, 1.0);
-
-    // Create the matrix and fill it with random 0s and 1s
-    std::vector<std::vector<int>> matrix(n, std::vector<int>(m, 0));
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j) {
-            double rand_num = distribution(gen);
-            if (rand_num <= 0.5) {
-                matrix[i][j] = 0;
-            } else {
-                matrix[i][j] = 1;
+    int n;
+    cin>>n;
+    vector<bitset<32> > a(n);
+    ff(i,0,n){
+        int x;
+        cin>>x;
+        a[i]=x;
+    }
+    // show(a);
+    int ans=0;
+    ff(i,0,32){
+        int cnt=0;
+        vpi dp(n);
+        if(a[0][i]==0){
+            dp[0]={0,0};
+        }
+        else{
+            dp[0]={1,1};
+        }
+        ff(j,1,n){
+            if(a[j][i]==0){
+                dp[j]={(dp[j-1].F+dp[j-1].S)%mod,dp[j-1].S};
+            }
+            else{
+                dp[j]={(1+j*(j+1)/2-dp[j-1].F+mod+j-dp[j-1].S+mod)%mod,(1+j-dp[j-1].S+mod)%mod};
             }
         }
+        int x=0;
+        ff(j,0,n) x=(x+dp[j].F)%mod;
+        ans=(ans+(x*(1<<i))%mod)%mod;
     }
-
-    show(matrix);
-
+    cout<<ans<<endl;
 }
 int32_t main(){
     init_code();

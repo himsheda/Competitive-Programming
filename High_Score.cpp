@@ -9,7 +9,6 @@ using namespace std;
 #define ppi pair<pii,int>
 #define ppp pair<p,p> 
 #define vpi vector<pii>
-#define vppi vector<ppi>
 #define vi vector<int>
 #define vvi vector<vi>
 #define vs vector<string>
@@ -41,7 +40,7 @@ template <class T> void show(pair<T, T>p) {cout << p.F << ' ' << p.S << endl;}
 void show(vector<string>&a) {trav(i,a) cout << i << endl;}
 template<class T> void take(vector<T>&a) {trav(i,a) cin >> i;}
 
-const int INF = 9e18;
+const int INF = 9e17;
 const int mod = 7+1e9;
 const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1};
 void init_code(){
@@ -49,27 +48,57 @@ void init_code(){
 }
 
 void solve(){
-    // Define the dimensions of the matrix
-    int n = 4;  // Number of rows
-    int m = 4;  // Number of columns
-
-    std::mt19937 gen(42);
-    std::uniform_real_distribution<double> distribution(0.0, 1.0);
-
-    // Create the matrix and fill it with random 0s and 1s
-    std::vector<std::vector<int>> matrix(n, std::vector<int>(m, 0));
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j) {
-            double rand_num = distribution(gen);
-            if (rand_num <= 0.5) {
-                matrix[i][j] = 0;
-            } else {
-                matrix[i][j] = 1;
-            }
+    int n,m;
+    cin>>n>>m;
+    vi dis(n+1,-INF);
+    vvi edges;
+    vi vis(n+1,0);
+    ff(i,0,m){
+        int a,b,c;
+        cin>>a>>b>>c;
+        edges.pb({a,b,c});
+        // indeg[b]++;
+    }
+    
+    dis[1]=0;
+    for(int i=0;i<n-1;i++){
+        for(auto &a:edges){
+            if(dis[a[0]]==-INF) continue;
+            dis[a[1]]=max(dis[a[1]],a[2]+dis[a[0]]);
         }
     }
-
-    show(matrix);
+    for(auto &a:edges){
+        if(dis[a[0]]==-INF) continue;
+        if(a[2]+dis[a[0]]>dis[a[1]]){
+            dis[a[1]]=max(dis[a[1]],a[2]+dis[a[0]]);
+            vis[a[1]]=1;
+        }    
+    }
+    ff(i,0,n+1){
+        for(auto &a:edges){
+            if(dis[a[0]]==-INF) continue;
+            if(vis[a[0]]==1){
+                vis[a[1]]=1;
+            }
+            if(a[2]+dis[a[0]]>dis[a[1]]){
+                dis[a[1]]=max(dis[a[1]],a[2]+dis[a[0]]);
+                
+            }    
+        }
+    }
+    // show(dis);
+    // show(vis);
+    if(vis[n]){
+        cout<<-1<<endl;
+        return;
+    }
+    if(dis[n]==-INF){
+        cout<<-1<<endl;
+    }
+    else{
+        cout<<dis[n]<<endl;
+    }
+    
 
 }
 int32_t main(){

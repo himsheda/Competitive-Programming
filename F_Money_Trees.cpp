@@ -9,7 +9,6 @@ using namespace std;
 #define ppi pair<pii,int>
 #define ppp pair<p,p> 
 #define vpi vector<pii>
-#define vppi vector<ppi>
 #define vi vector<int>
 #define vvi vector<vi>
 #define vs vector<string>
@@ -47,36 +46,67 @@ const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1};
 void init_code(){
     ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
 }
-
-void solve(){
-    // Define the dimensions of the matrix
-    int n = 4;  // Number of rows
-    int m = 4;  // Number of columns
-
-    std::mt19937 gen(42);
-    std::uniform_real_distribution<double> distribution(0.0, 1.0);
-
-    // Create the matrix and fill it with random 0s and 1s
-    std::vector<std::vector<int>> matrix(n, std::vector<int>(m, 0));
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j) {
-            double rand_num = distribution(gen);
-            if (rand_num <= 0.5) {
-                matrix[i][j] = 0;
-            } else {
-                matrix[i][j] = 1;
-            }
+int max_lessx(int x,int l,int r,vi &arr){
+    if(l>r){
+        return 0;
+    }
+    int sum = 0;
+    int l1=l,r1=l;
+    int ans=0;
+    while(r1<=r){
+        sum+=arr[r1];
+        while(sum>x){
+            sum-=arr[l1];
+            l1++;
         }
+        // cout<<l1<<" "<<r1<<" "<<sum<<endl;
+        ans=max(ans,r1-l1+1);
+        r1++;
     }
 
-    show(matrix);
-
+    
+    return ans;
+}
+void solve(){
+    int n,k;
+    cin>>n>>k;
+    vi a(n);
+    take(a);
+    vi h(n);
+    take(h);
+    if(n==1){
+        cout<<0<<endl;
+        return;
+    }
+    vi div(n,0);
+    ff(i,0,n-1){
+        div[i]=(h[i]%h[i+1])==0;
+    }
+    // show(div);
+    // show(pref);
+    int l=0,r=0;
+    int ans=0;
+    while(r<n){
+        // cout<<l<<" "<<r<<endl;
+        if(div[r]==1){
+            r++;
+        }
+        else{
+            while(l<r && div[l]==0){
+                l++;
+            }
+            ans=max(ans,max_lessx(k,l,r,a));
+            l=r+1;
+            r=l;
+        }
+    }
+    cout<<ans<<endl;
 }
 int32_t main(){
     init_code();
     //cout << fixed << setprecision(1);
     int t=1;
-    // cin>>t;
+    cin>>t;
     while(t--){
        solve(); 
     }

@@ -9,7 +9,6 @@ using namespace std;
 #define ppi pair<pii,int>
 #define ppp pair<p,p> 
 #define vpi vector<pii>
-#define vppi vector<ppi>
 #define vi vector<int>
 #define vvi vector<vi>
 #define vs vector<string>
@@ -47,36 +46,74 @@ const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1};
 void init_code(){
     ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
 }
-
-void solve(){
-    // Define the dimensions of the matrix
-    int n = 4;  // Number of rows
-    int m = 4;  // Number of columns
-
-    std::mt19937 gen(42);
-    std::uniform_real_distribution<double> distribution(0.0, 1.0);
-
-    // Create the matrix and fill it with random 0s and 1s
-    std::vector<std::vector<int>> matrix(n, std::vector<int>(m, 0));
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j) {
-            double rand_num = distribution(gen);
-            if (rand_num <= 0.5) {
-                matrix[i][j] = 0;
-            } else {
-                matrix[i][j] = 1;
+bool chk(bitset<32> &a){
+    int count=0;
+    int i=0;
+    while(i<32){
+        if(a[i]==1){
+            count++;
+            while(i<32 && a[i]==1){
+                i++;
             }
         }
+        else{
+            i++;
+        }
     }
-
-    show(matrix);
-
+    return count<=2;
+}
+void solve(){
+    int n;
+    cin>>n;
+    vi arr(n);
+    take(arr);
+    int sum=accumulate(all(arr),0LL);
+    if(sum%n!=0){
+        cout<<"No"<<endl;
+        return;
+    }
+    sum/=n;
+    vector<bitset<32>> dp(n);
+    ff(i,0,n){
+        dp[i]=bitset<32>(sum^arr[i]);
+        if(!chk(dp[i])){
+            cout<<"No"<<endl;
+            return;
+        }
+    }
+    vector<int> cnt(32);
+    ff(i,0,n){
+        if(dp[i]==0){
+            continue;
+        }
+        int j=0;
+        int flag=0;
+        while(j<32){
+            if(!flag&&dp[i][j]==1){
+                cnt[j]++;
+                flag=1;
+            }
+            if(flag&&dp[i][j]==1){
+                cnt[j]--;
+                break;
+            }
+            j++;
+        }
+    }
+    show(dp);
+    ff(i,0,32){
+        if(cnt[i]!=0){
+            cout<<"No"<<endl;
+            return;
+        }
+    }
+    cout<<"Yes"<<endl;
 }
 int32_t main(){
     init_code();
     //cout << fixed << setprecision(1);
     int t=1;
-    // cin>>t;
+    cin>>t;
     while(t--){
        solve(); 
     }

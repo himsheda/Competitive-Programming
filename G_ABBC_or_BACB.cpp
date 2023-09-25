@@ -9,7 +9,6 @@ using namespace std;
 #define ppi pair<pii,int>
 #define ppp pair<p,p> 
 #define vpi vector<pii>
-#define vppi vector<ppi>
 #define vi vector<int>
 #define vvi vector<vi>
 #define vs vector<string>
@@ -47,36 +46,63 @@ const int dx[4]{1, 0, -1, 0}, dy[4]{0, 1, 0, -1};
 void init_code(){
     ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
 }
-
-void solve(){
-    // Define the dimensions of the matrix
-    int n = 4;  // Number of rows
-    int m = 4;  // Number of columns
-
-    std::mt19937 gen(42);
-    std::uniform_real_distribution<double> distribution(0.0, 1.0);
-
-    // Create the matrix and fill it with random 0s and 1s
-    std::vector<std::vector<int>> matrix(n, std::vector<int>(m, 0));
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j) {
-            double rand_num = distribution(gen);
-            if (rand_num <= 0.5) {
-                matrix[i][j] = 0;
-            } else {
-                matrix[i][j] = 1;
+int DP(int  i,string &s,vi &dp){
+    if(i==sz(s)){
+        return 0;
+    }
+    if(dp[i]!=-1){
+        return dp[i];
+    }
+    int ans=0;
+    int cnt=0;
+    if(s[i]=='B'){
+        ff(j,i+1,sz(s)){
+            if(s[j]=='A'){
+                cnt++;
+            }
+            else{
+                break;
             }
         }
+        if(cnt>0){
+            ans=cnt+DP(i+cnt+1,s,dp);
+        }
+        else{
+            ans=DP(i+1,s,dp);
+        }
     }
-
-    show(matrix);
-
+    else{
+        ff(j,i,sz(s)){
+            if(s[j]=='A'){
+                cnt++;
+            }
+            else{
+                break;
+            }
+        }
+        if(i+cnt<sz(s)){
+            ans=max(cnt+DP(i+cnt+1,s,dp),DP(i+cnt,s,dp));
+        }
+        else{
+            ans=0;
+        }
+        
+    }
+    return dp[i]= ans;
+}
+void solve(){
+    string s;
+    cin>>s;
+    
+    vi dp(sz(s)+1,-1);
+    int ans=DP(0,s,dp);
+    cout<<ans<<endl;
 }
 int32_t main(){
     init_code();
     //cout << fixed << setprecision(1);
     int t=1;
-    // cin>>t;
+    cin>>t;
     while(t--){
        solve(); 
     }
